@@ -1,30 +1,18 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+FROM alpine:latest
 
-ENV LANG C.UTF-8
-ENV MB8600_VERSION v1.1.2
-ENV MB8600_VERSION_PATH 1.1.2
-
-MAINTAINER Matt Colyer
-
-# Build arugments
-ARG BUILD_ARCH
-ARG BUILD_DATE
-ARG BUILD_REF
-ARG BUILD_VERSION
+ENV MB8600_VERSION=v1.1.3
+ENV MB8600_VERSION_PATH=1.1.3
 
 LABEL \
   Description="Record mb8600 modem statistics in influxdb" \
-  io.hass.version="VERSION" \
-  io.hass.type="addon" \
-  io.hass.arch="armhf|aarch64|i386|amd64"
+  maintainer="ARTbird309"
 
 # Build step
 ENV GOPATH="/go"
 ENV GO111MODULE=on
 
 RUN apk add --no-cache --virtual build-dependencies go wget git musl-dev && \
-  wget -O /mb8600.tar.gz https://github.com/mcolyer/mb8600/archive/$MB8600_VERSION.tar.gz && \
+  wget -O /mb8600.tar.gz https://github.com/artbird309/mb8600/archive/$MB8600_VERSION.tar.gz && \
   tar xf /mb8600.tar.gz && \
   mkdir -p $GOPATH && mkdir -p $GOPATH/src/matt.colyer.name/ && \
   mv /mb8600-$MB8600_VERSION_PATH $GOPATH/src/matt.colyer.name/mb8600 && \
@@ -34,6 +22,9 @@ RUN apk add --no-cache --virtual build-dependencies go wget git musl-dev && \
   apk del build-dependencies && \
   apk add --no-cache jq
 
-COPY ./run.sh /
-RUN chmod +x /run.sh
-ENTRYPOINT ["/run.sh"]
+# ENV for script to get rid of the options.json and pass it stright to the compiled file
+ENV INFLUXDB_ADDRESS="http://192.168.1.1:8086"
+ENV INFLUXDB_DATABASE="cable-modem"
+ENV MODEM_PROTOCOL="https"
+
+ENTRYPOINT ./mb8600 -influxdb-address $INFLUXDB_ADDRESS -influxdb-database $INFLUXDB_DATABASE -protocol $MODEM_PROTOCOL
