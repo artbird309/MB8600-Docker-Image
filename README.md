@@ -4,13 +4,12 @@ Runs a the handy script from https://github.com/mattund/modem-statistics that Ma
 
 I then converted Matt Colyer docker image to run standalone with alpine and removed the need for config files as the environment variables as passed to the container. This image pulls the v1.1.3 tag from https://github.com/artbird309/mb8600
 
-### Comands to compile docker image:
-
+### Command to compile docker image:
 ```
-docker build --tag artbird309/mb8600-docker-image:1.0 https://github.com/artbird309/MB8600-Docker-Image
+docker build --tag artbird309/mb8600-docker-image:1.0 https://github.com/artbird309/MB8600-Docker-Image.git
 ```
-### Comands to deploy container:
 
+### Command to deploy container:
 ```
 docker run -d \
 --name=cable-modem-stats \
