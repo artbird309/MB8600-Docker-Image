@@ -5,7 +5,8 @@ ENV MB8600_VERSION_PATH=1.1.3
 
 LABEL \
   Description="Record mb8600 modem statistics in influxdb" \
-  maintainer="ARTbird309"
+  maintainer="ARTbird309" \
+  org.opencontainers.image.source="https://github.com/artbird309/MB8600-Docker-Image"
 
 # Build step
 ENV GOPATH="/go"
